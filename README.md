@@ -1,143 +1,189 @@
-# Proyecto de Control de Motor DC: Consola Digital v1.0
-
-**Autor:** Marco Gallegos
-**Fecha:** Enero 2024
-
----
+# Proyecto de Control de Motor DC
 
 ## 1. Descripción General
 
-Este proyecto consiste en una consola de control inteligente para un motor de corriente continua (DC). Utiliza un microcontrolador **ESP8266 (HW-364A)** para gestionar la potencia a través de un driver **DRV8871**, ofreciendo una interfaz de usuario profesional con pantalla **OLED**, encoder rotatorio y botones de dirección.
+Este proyecto implementa una consola digital de control para un motor de corriente continua (DC), orientada a operación segura, control fino de velocidad y protección mecánica/eléctrica. A diferencia de un control directo con potenciómetro, el sistema introduce:
 
-El sistema prioriza la **seguridad mecánica**, implementando rampas de aceleración y una **máquina de estados** que evita arranques accidentales o cambios de giro bruscos que puedan dañar engranajes o el motor.
+- Máquina de estados para evitar arranques accidentales.
+- Aceleración y desaceleración progresiva (rampa).
+- Inversión de giro con secuencia controlada.
+- Interfaz hombre–máquina con encoder rotatorio, botones y pantalla OLED.
+
+El sistema se desarrolla inicialmente sobre **HW-364A (ESP8266)**, con una ruta clara de migración a **ESP32 DevKit V1**.
 
 ---
 
-## 2. Especificaciones de Hardware
+## 2. Arquitectura del Sistema
 
-### 2.1 Módulo de Control (Placa Azul)
-
-La interfaz de usuario se centraliza en un módulo que incluye un **OLED de 0.96"**, un **encoder con botón** y **dos botones laterales**.
-
-**Orden físico de los pines:**
+### 2.1 Flujo Funcional
 
 ```
-CON | SDA | SCL | PSH | RTA | TRB | BAK | GND | VCC
+Usuario (Encoder / Botones)
+        ↓
+     ESP8266
+        ↓
+    Driver DRV8871
+        ↓
+     Motor DC
+        ↓
+   OLED (Feedback)
 ```
 
 ---
 
-### 2.2 Driver de Potencia (DRV8871)
+## 3. Hardware
 
-* **Voltaje de Motor:** Hasta 45V (fuente externa)
-* **Corriente:** Pico de 3.6A
-* **Control:** PWM bidireccional (Puente H)
+### 3.1 Controlador Principal
 
----
+- Placa: HW-364A
+- MCU: ESP8266
+- Lógica: 3.3 V
+- Limitación crítica: GPIO reducidos
 
-## 3. Conexiones y Pinout
+### 3.2 Sistema de Energía
 
-### 3.1 Módulo de Interfaz a ESP8266
+- Tierra común (GND) para todo el sistema
+- Motor alimentado por fuente externa independiente
+- Electrónica alimentada a 3.3 V
 
-| Etiqueta PCB | Función               | Pin ESP8266 | Observaciones                           |
-| ------------ | --------------------- | ----------- | --------------------------------------- |
-| CON          | Confirmar / Adelante  | D3 (GPIO0)  | Pin de boot. No presionar al encender   |
-| SDA          | I2C Data (OLED)       | D2 (GPIO4)  | —                                       |
-| SCL          | I2C Clock (OLED)      | D1 (GPIO5)  | —                                       |
-| PSH          | Botón Encoder (Start) | D7 (GPIO13) | —                                       |
-| RTA          | Encoder Fase A        | D5 (GPIO14) | —                                       |
-| TRB          | Encoder Fase B        | D6 (GPIO12) | —                                       |
-| BAK          | Atrás / Reversa       | D8 (GPIO15) | Pin de boot. Debe estar LOW al encender |
-| GND          | Tierra                | G (GND)     | —                                       |
-| VCC          | Alimentación          | 3V (3.3V)   | —                                       |
+### 3.3 Asignación de Pines
 
----
+| Función | Señal | Pin |
+|------|------|-----|
+| OLED SDA | Datos I2C | D2 |
+| OLED SCL | Reloj I2C | D1 |
+| Encoder A | Giro A | D5 |
+| Encoder B | Giro B | D6 |
+| Botón Centro | Start | D7 |
+| Botón Back | Reversa | D8 |
+| Botón Confirm | Adelante | D3 |
+| Driver IN1 | Motor A | D0 |
+| Driver IN2 | Motor B | D4 |
 
-### 3.2 Driver DRV8871 a ESP8266
+### 3.4 Driver de Potencia
 
-| Etiqueta PCB | Función       | Pin ESP8266 | Observaciones             |
-| ------------ | ------------- | ----------- | ------------------------- |
-| IN1          | Entrada PWM A | D0 (GPIO16) | PWM limitado por hardware |
-| IN2          | Entrada PWM B | D4 (GPIO2)  | Comparte LED azul interno |
-
----
-
-## 4. Lógica de Operación
-
-### 4.1 Máquina de Estados de Seguridad
-
-Para prevenir daños y accidentes, el sistema implementa cuatro estados definidos:
-
-* **WAITING_START (Armado):**
-
-  * Motor bloqueado
-  * Pantalla solicita pulsar **PSH** para iniciar
-
-* **SELECT_DIR (Dirección):**
-
-  * Espera selección del sentido
-  * **CON** = Adelante
-  * **BAK** = Reversa
-
-* **RUNNING (Operación):**
-
-  * Motor en giro
-  * Encoder ajusta `targetSpeed`
-
-* **CHANGING_DIR (Transición):**
-
-  * Rampa baja progresivamente a 0%
-  * Pausa de seguridad
-  * Rampa sube en el nuevo sentido
+- Modelo: DRV8871
+- Control PWM bidireccional
+- Polaridad definida por IN1 / IN2
 
 ---
 
-### 4.2 Control de Velocidad Adaptativo
+## 4. Lógica de Control
 
-* **Giro lento:** Ajustes finos de ±1%
-* **Giro rápido:** Ajustes de ±5% (intervalo entre pulsos < 50 ms)
-* **Rampa de seguridad:** Incrementos de 0.5% por ciclo
+### 4.1 Máquina de Estados
+
+| Estado | Descripción |
+|------|-------------|
+| WAITING_START | Sistema armado, motor bloqueado |
+| SELECT_DIR | Selección explícita de sentido |
+| RUNNING | Operación normal |
+| CHANGING_DIR | Inversión controlada |
+
+### 4.2 Arranque Seguro
+
+El motor permanece apagado hasta confirmación explícita del usuario. Previene reinicios peligrosos tras fallas de energía.
+
+### 4.3 Selección de Sentido
+
+- BACK → Reversa
+- CONFIRM → Adelante
+
+No existe sentido por defecto.
+
+### 4.4 Control de Velocidad Adaptativo
+
+- Giro lento → ±1 %
+- Giro rápido (< 50 ms) → ±5 %
+- Rango: 0–100 %
+
+### 4.5 Rampa de Aceleración
+
+Variables desacopladas:
+
+- `targetSpeed` → intención del usuario
+- `currentSpeed` → acción física
+
+Incremento/decremento: 0.5 % por ciclo (~2.5 s a plena escala).
+
+### 4.6 Inversión Inteligente
+
+Secuencia obligatoria:
+
+1. Rampa descendente hasta 0 %
+2. Pausa mecánica
+3. Cambio de polaridad
+4. Rampa ascendente
 
 ---
 
-## 5. Interfaz de Usuario (HMI)
+## 5. Firmware
 
-La pantalla OLED presenta información crítica del sistema:
+### 5.1 Inicialización (`setup()`)
 
-* **Iconos de sentido:** Flechas grandes indicando el giro
-* **Velocidad real:** Porcentaje actual aplicado por la rampa
-* **Velocidad objetivo:** Valor configurado por el usuario
-* **Alertas del sistema:**
+- Configuración de GPIO
+- Motor apagado por defecto
+- Botones con pull-up interno
+- Inicialización OLED
 
-  * `SISTEMA BLOQUEADO`
-  * `CAMBIANDO GIRO`
+### 5.2 Bucle Principal (`loop()`)
 
----
+- Lectura del encoder
+- Ejecución de máquina de estados
+- Control de rampa
+- Render de interfaz
 
-## 6. Hoja de Ruta — Versión 2 (V2)
+### 5.3 Funciones Críticas
 
-### 6.1 Migración a ESP32
-
-* Sustitución por **ESP32 DevKit V1**
-* Eliminación de restricciones de GPIO
-* PWM por hardware con mayor resolución
-
-### 6.2 Indicadores de Estado Visuales (LED RGB)
-
-| Color              | Estado del sistema            |
-| ------------------ | ----------------------------- |
-| 🟡 Amarillo        | Sistema en espera (0%)        |
-| 🟢 Verde           | Motor girando adelante        |
-| 🔴 Rojo            | Motor girando en reversa      |
-| 🔵 Azul (parpadeo) | Cambio de dirección / frenado |
+- `readEncoderSpeed()` → velocidad adaptativa
+- `handleDirectionButtons()` → solicitud de inversión
+- `updateMotorRamp()` → núcleo de control
+- `drawInterface()` → visualización
 
 ---
 
-## 7. Limitaciones Técnicas Actuales
+## 6. Interfaz de Usuario
 
-* **D3 / D8:** Pines sensibles al arranque por resistencias internas
-* **PWM en D0:** Frecuencia no estándar, compensada por software
+- Flechas grandes indican sentido
+- Porcentaje central = velocidad real
+- Indicador secundario = velocidad objetivo
+
+Diseño orientado a lectura inmediata.
 
 ---
 
-**Desarrollado por:** Marco Gallegos
+## 7. Limitaciones Actuales
+
+- GPIO al límite
+- Sin indicadores periféricos
+- Expansión restringida
+
+---
+
+## 8. Versión 2 (V2)
+
+### 8.1 Migración a ESP32
+
+- Mayor número de GPIO
+- PWM por hardware
+- Escalabilidad
+
+### 8.2 LED RGB de Estado
+
+| Color | Significado |
+|------|-------------|
+| Amarillo | Standby / 0 % |
+| Verde | Adelante |
+| Rojo | Reversa |
+| Rojo/Verde | Inversión |
+
+### 8.3 Cambios en Firmware
+
+- Nueva función `updateLeds()`
+- GPIO dedicados (25, 26, 27)
+- Mezcla de color por PWM
+
+---
+
+## 9. Conclusión
+
+El sistema establece una base sólida para control seguro y profesional de motores DC, con una arquitectura preparada para evolucionar hacia una solución embebida más robusta en ESP32.
