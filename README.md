@@ -184,6 +184,57 @@ Diseño orientado a lectura inmediata.
 
 ---
 
-## 9. Conclusión
+## 9. Cargar el Firmware con Arduino CLI
+
+### 9.1 Requisitos Previos
+
+```bash
+# Instalar Arduino CLI (Linux/macOS)
+curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh
+
+# O mediante package manager
+brew install arduino-cli  # macOS
+sudo apt install arduino-cli  # Debian/Ubuntu
+```
+
+### 9.2 Configuración Inicial
+
+```bash
+# Configurar directorio de datos
+export ArduinoDataDir="$HOME/.arduino15"
+
+# Instalar la plataforma ESP8266
+arduino-cli core install esp8266:esp8266
+
+# Instalar bibliotecas requeridas
+arduino-cli lib install "Adafruit GFX Library"
+arduino-cli lib install "Adafruit SSD1306"
+```
+
+### 9.3 Compilar
+
+```bash
+arduino-cli compile -b esp8266:esp8266:nodemcu drill_vanity.ino
+```
+
+### 9.4 Cargar a la Placa
+
+```bash
+# Listar puertos disponibles
+arduino-cli board list
+
+# Cargar el firmware (reemplazar /dev/ttyUSB0 con tu puerto)
+arduino-cli upload -b esp8266:esp8266:nodemcu -p /dev/ttyUSB0 drill_vanity.ino
+```
+
+### 9.5 Comando Completo (Una Línea)
+
+```bash
+arduino-cli compile -b esp8266:esp8266:nodemcu -p /dev/ttyUSB0 --upload drill_vanity.ino
+```
+
+---
+
+## 10. Conclusión
 
 El sistema establece una base sólida para control seguro y profesional de motores DC, con una arquitectura preparada para evolucionar hacia una solución embebida más robusta en ESP32.
