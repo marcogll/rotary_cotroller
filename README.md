@@ -11,10 +11,11 @@
 
 # Drill Vanity
 
-Herramienta de configuración y personalización ⚙️
+Software project for business operations ⚙️
 
 <p>
-  <img src="https://img.shields.io/badge/español-111111?style=flat-square&logo=googletranslate&logoColor=white" alt="Español">
+  <img src="https://img.shields.io/badge/english-111111?style=flat-square&logo=googletranslate&logoColor=white" alt="English">
+  <img src="https://img.shields.io/badge/website-111111?style=flat-square&logo=github&logoColor=white" alt="Website">
 </p>
 
 ---
@@ -262,5 +263,6 @@ arduino-cli compile -b esp8266:esp8266:nodemcu -p /dev/ttyUSB0 --upload drill_va
 ## 10. Conclusión
 
 El sistema establece una base sólida para control seguro y profesional de motores DC, con una arquitectura preparada para evolucionar hacia una solución embebida más robusta en ESP32.
+
 
 
