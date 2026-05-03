@@ -1,4 +1,20 @@
-# Proyecto de Control de Motor DC
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/marcogll/mg_data_storage/b1b4035928e086f9394baf9988f80f4b0075ae20/soul23/logo/s23_logo_wh.png">
+    <img src="https://raw.githubusercontent.com/marcogll/mg_data_storage/b1b4035928e086f9394baf9988f80f4b0075ae20/soul23/logo/s23_logo_blk.png" alt="Soul23" width="110">
+  </picture>
+</p>
+
+<h1 align="center">rotary_cotroller.git</h1>
+
+<p align="center">
+  - Máquina de estados para evitar arranques accidentales.
+</p>
+
+<p align="center">
+  [![Soul23](https://img.shields.io/badge/Soul23-000000?style=for-the-badge)](https://github.com/marcogll)
+</p>
+
 
 ## 1. Descripción General
 
