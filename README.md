@@ -1,29 +1,23 @@
-<div align="center">
-
-<a href="https://soul23.mx">
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/marcogll/mg_data_storage/refs/heads/main/soul23/logo/soul23_logo_wh.png">
-  <img src="https://raw.githubusercontent.com/marcogll/mg_data_storage/refs/heads/main/soul23/logo/soul23_logo_blk.png" alt="Soul23" width="110">
-</picture>
-</a>
-
-</div>
-
-# Drill Vanity
-
-Software project for business operations ⚙️
-
-<p>
-  <img src="https://img.shields.io/badge/english-111111?style=flat-square&logo=googletranslate&logoColor=white" alt="English">
-  <img src="https://img.shields.io/badge/website-111111?style=flat-square&logo=github&logoColor=white" alt="Website">
+<p align="center">
+  <img src="https://raw.githubusercontent.com/marcogll/mg_data_storage/refs/heads/main/soul23/logo/soul23_logo.svg" width="110" alt="Soul23">
 </p>
 
----
+<h1 align="center">Drill Vanity</h1>
 
-<h1 align="center">rotary_cotroller.git</h1>
+<p align="center">
+  Proyecto de software para operaciones empresariales 🔧♀
+</p>
 
+<p align="center">
+  
+</p>
 
+  Proyecto de software para operaciones empresariales ⚙️
+</p>
 
+<p align="center">
+  
+</p>
 
 ## 1. Descripción General
 
@@ -263,6 +257,7 @@ arduino-cli compile -b esp8266:esp8266:nodemcu -p /dev/ttyUSB0 --upload drill_va
 ## 10. Conclusión
 
 El sistema establece una base sólida para control seguro y profesional de motores DC, con una arquitectura preparada para evolucionar hacia una solución embebida más robusta en ESP32.
+
 
 
 
