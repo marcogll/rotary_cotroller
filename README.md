@@ -1,23 +1,39 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/marcogll/mg_data_storage/refs/heads/main/soul23/logo/soul23_logo.svg" width="110" alt="Soul23">
+  <a href="https://soul23.mx">
+    <picture>
+      <source
+        media="(prefers-color-scheme: dark)"
+        srcset="https://raw.githubusercontent.com/marcogll/mg_data_storage/refs/heads/main/soul23/logo/soul23_logo_wh.png">
+      <source
+        media="(prefers-color-scheme: light)"
+        srcset="https://raw.githubusercontent.com/marcogll/mg_data_storage/refs/heads/main/soul23/logo/soul23_logo_blk.png">
+      <img
+        src="https://raw.githubusercontent.com/marcogll/mg_data_storage/refs/heads/main/soul23/logo/soul23_logo_blk.png"
+        width="110"
+        alt="Soul:23">
+    </picture>
+  </a>
 </p>
 
 <h1 align="center">Drill Vanity</h1>
 
 <p align="center">
-  Proyecto de software para operaciones empresariales 🔧♀
+  Controlador rotativo para operaciones empresariales — firmware, hardware y lógica de control.
 </p>
 
 <p align="center">
-  
+  <img src="https://img.shields.io/badge/C++-3a3a3a?style=flat-square&logo=cpp&logoColor=white">
+  <img src="https://img.shields.io/badge/PlatformIO-3a3a3a?style=flat-square&logo=platformio&logoColor=white">
+  <img src="https://img.shields.io/badge/Arduino-3a3a3a?style=flat-square&logo=arduino&logoColor=white">
 </p>
 
-  Proyecto de software para operaciones empresariales ⚙️
-</p>
+---
 
-<p align="center">
-  
-</p>
+## Description
+
+Proyecto de software para operaciones empresariales: descripción general, arquitectura del sistema, hardware, lógica de control y firmware.
+
+C++ con PlatformIO/Arduino.
 
 ## 1. Descripción General
 
